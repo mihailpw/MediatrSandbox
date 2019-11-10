@@ -7,7 +7,7 @@ using MR.Web.Features.Weather;
 
 namespace MR.Web.Infra
 {
-    public class CacheForecastSlowPipelineBehavior : IPipelineBehavior<GetForecastSlow.Command, GetForecastSlow.Response>
+    public class CacheForecastSlowPipelineBehavior : IPipelineBehavior<GetForecastSlow.Request, GetForecastSlow.Response>
     {
         private readonly ILogger<CacheForecastSlowPipelineBehavior> _logger;
 
@@ -20,7 +20,7 @@ namespace MR.Web.Infra
         }
 
         public async Task<GetForecastSlow.Response> Handle(
-            GetForecastSlow.Command request,
+            GetForecastSlow.Request request,
             CancellationToken cancellationToken,
             RequestHandlerDelegate<GetForecastSlow.Response> next)
         {

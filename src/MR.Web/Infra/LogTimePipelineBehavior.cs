@@ -18,7 +18,7 @@ namespace MR.Web.Infra
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
             var stopWatch = Stopwatch.StartNew();
-            var result = await next();
+            var result = await next().ConfigureAwait(false);
             stopWatch.Stop();
 
             _logger.LogDebug($"Request finished in: {stopWatch.Elapsed:c}");

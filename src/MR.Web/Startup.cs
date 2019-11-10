@@ -2,8 +2,10 @@ using System.Reflection;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MR.Dal;
 using MR.Web.Features.Weather;
 using MR.Web.Infra;
 
@@ -16,8 +18,10 @@ namespace MR.Web
             services.AddControllers()
                 .AddJsonOptions(c => c.JsonSerializerOptions.WriteIndented = true);
 
+            services.AddDbContext<AppDbContext>(c => c.UseInMemoryDatabase(nameof(AppDbContext)));
+
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LogTimePipelineBehavior<,>));
-            services.AddSingleton<IPipelineBehavior<GetForecastSlow.Command, GetForecastSlow.Response>, CacheForecastSlowPipelineBehavior>();
+            services.AddSingleton<IPipelineBehavior<GetForecastSlow.Request, GetForecastSlow.Response>, CacheForecastSlowPipelineBehavior>();
             services.AddMediatR(c => c.Using<CustomMediator>(), Assembly.GetAssembly(typeof(Startup)));
         }
 
@@ -29,9 +33,7 @@ namespace MR.Web
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

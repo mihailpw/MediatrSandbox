@@ -17,15 +17,15 @@ namespace MR.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<GetForecast.Response> GetAsync()
         {
-            return Ok(await _mediator.Send(new GetForecast.Command(), HttpContext.RequestAborted));
+            return await _mediator.Send(new GetForecast.Request(), HttpContext.RequestAborted);
         }
 
         [HttpGet("slow")]
-        public async Task<IActionResult> GetSlowAsync()
+        public async Task<GetForecastSlow.Response> GetSlowAsync()
         {
-            return Ok(await _mediator.Send(new GetForecastSlow.Command(), HttpContext.RequestAborted));
+            return await _mediator.Send(new GetForecastSlow.Request(), HttpContext.RequestAborted);
         }
     }
 }

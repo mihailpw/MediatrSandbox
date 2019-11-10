@@ -7,7 +7,7 @@ namespace MR.Web.Features.Weather
 {
     public static class GetForecastSlow
     {
-        public class Command : IRequest<Response>
+        public class Request : IRequest<Response>
         {
             public TimeSpan DelayTime { get; set; } = TimeSpan.FromSeconds(5);
         }
@@ -22,7 +22,7 @@ namespace MR.Web.Features.Weather
             }
         }
 
-        public class Handler : IRequestHandler<Command, Response>
+        public class Handler : IRequestHandler<Request, Response>
         {
             private readonly IMediator _mediator;
 
@@ -31,12 +31,12 @@ namespace MR.Web.Features.Weather
                 _mediator = mediator;
             }
 
-            public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 await Task.Delay(request.DelayTime, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var response = await _mediator.Send(new GetForecast.Command(), cancellationToken);
+                var response = await _mediator.Send(new GetForecast.Request(), cancellationToken);
 
                 return new Response(response.Forecasts);
             }

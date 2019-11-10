@@ -16,7 +16,8 @@ namespace MR.Web.Infra
 
         public Task Process(TRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"Request started: {request.GetType()}");
+            var requestType = request.GetType();
+            _logger.LogDebug($"Request started: {requestType} ({requestType == typeof(TRequest)})");
 
             return Task.CompletedTask;
         }

@@ -9,7 +9,7 @@ namespace MR.Web.Features.Weather
 {
     public static class GetForecast
     {
-        public class Command : IRequest<Response>
+        public class Request : IRequest<Response>
         {
             
         }
@@ -24,7 +24,7 @@ namespace MR.Web.Features.Weather
             }
         }
 
-        public class Handler : IRequestHandler<Command, Response>
+        public class Handler : IRequestHandler<Request, Response>
         {
             private static readonly string[] Summaries = new[]
             {
@@ -38,7 +38,7 @@ namespace MR.Web.Features.Weather
                 _logger = logger;
             }
 
-            public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 await Task.CompletedTask;
 
