@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
 using MR.Dal;
 using MR.Web.Models;
@@ -13,6 +14,7 @@ namespace MR.Web.Features.Users
             public string Name { get; set; }
             public string Email { get; set; }
         }
+
         public class Response
         {
             public Response(UserEntity user)
@@ -21,6 +23,15 @@ namespace MR.Web.Features.Users
             }
 
             public UserEntity User { get; }
+        }
+
+        public class RequestValidator : AbstractValidator<Request>
+        {
+            public RequestValidator()
+            {
+                RuleFor(x => x.Name).NotEmpty();
+                RuleFor(x => x.Email).NotEmpty().EmailAddress();
+            }
         }
 
         public class Handler : IRequestHandler<Request, Response>
