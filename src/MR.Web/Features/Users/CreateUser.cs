@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentValidation;
 using MediatR;
 using MR.Dal;
@@ -13,16 +14,17 @@ namespace MR.Web.Features.Users
         {
             public string Name { get; set; }
             public string Email { get; set; }
+            public string Description { get; set; }
         }
 
         public class Response
         {
-            public Response(UserEntity user)
+            public Response(UserDtos.Full user)
             {
                 User = user;
             }
 
-            public UserEntity User { get; }
+            public UserDtos.Full User { get; }
         }
 
         public class RequestValidator : AbstractValidator<Request>
@@ -34,28 +36,35 @@ namespace MR.Web.Features.Users
             }
         }
 
+        public class Mappings : Profile
+        {
+            public Mappings()
+            {
+                CreateMap<Request, UserEntity>();
+                CreateMap<UserEntity, UserDtos.Full>();
+            }
+        }
+
         public class Handler : IRequestHandler<Request, Response>
         {
+            private readonly IMapper _mapper;
             private readonly AppDbContext _appDbContext;
 
-            public Handler(AppDbContext appDbContext)
+            public Handler(IMapper mapper, AppDbContext appDbContext)
             {
+                _mapper = mapper;
                 _appDbContext = appDbContext;
             }
 
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var user = new UserEntity
-                {
-                    Name = request.Name,
-                    Email = request.Email,
-                };
+                var user = _mapper.Map<UserEntity>(request);
 
                 await _appDbContext.AddAsync(user, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 await _appDbContext.SaveChangesAsync(cancellationToken);
 
-                return new Response(user);
+                return new Response(_mapper.Map<UserDtos.Full>(user));
             }
         }
     }

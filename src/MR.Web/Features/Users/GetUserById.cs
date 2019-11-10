@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using MR.Dal;
 using MR.Web.Features.Core;
@@ -16,20 +17,30 @@ namespace MR.Web.Features.Users
 
         public class Response
         {
-            public Response(UserEntity user)
+            public Response(UserDtos.Full user)
             {
                 User = user;
             }
 
-            public UserEntity User { get; }
+            public UserDtos.Full User { get; }
+        }
+
+        public class Mappings : Profile
+        {
+            public Mappings()
+            {
+                CreateMap<UserEntity, UserDtos.Full>();
+            }
         }
 
         public class Handler : IRequestHandler<Request, Response>
         {
+            private readonly IMapper _mapper;
             private readonly AppDbContext _appDbContext;
 
-            public Handler(AppDbContext appDbContext)
+            public Handler(IMapper mapper, AppDbContext appDbContext)
             {
+                _mapper = mapper;
                 _appDbContext = appDbContext;
             }
 
@@ -41,7 +52,7 @@ namespace MR.Web.Features.Users
                     throw new NotExistsException();
                 }
 
-                return new Response(user);
+                return new Response(_mapper.Map<UserDtos.Full>(user));
             }
         }
     }

@@ -3,9 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using MR.Web.Features.Weather;
 
-namespace MR.Web.Infra
+namespace MR.Web.Features.Weather
 {
     public class CacheForecastSlowPipelineBehavior : IPipelineBehavior<GetForecastSlow.Request, GetForecastSlow.Response>
     {
